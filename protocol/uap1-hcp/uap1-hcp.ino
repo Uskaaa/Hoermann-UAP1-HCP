@@ -41,6 +41,34 @@ Events check_callstack() {
   return event;
 }
 
+#define RESPONSE_SIZE 21
+byte response_message[RESPONSE_SIZE];
+
+response_message handleEvent(Events event) {
+  switch (event) {
+    case OPEN_GATE:
+      Serial.println("OPEN_GATE triggered");
+      break;
+    case CLOSE_GATE:
+      Serial.println("CLOSE_GATE triggered");
+      break;
+    case STOP:
+      Serial.println("STOP triggered");
+      break;
+    case VENTING:
+      Serial.println("STOP triggered");
+      break;
+    case HALF_OPEN:
+      Serial.println("HALF_OPEN triggered");
+      break;
+    case TOGGLE_LIGHT:
+      Serial.println("TOGGLE_LIGHT triggered");
+      break;
+    default:
+      break;
+  }
+}
+
 // Calculate CRC-16 (Modbus)
 uint16_t calculateCRC(uint8_t *buffer, int length) {
   int i, j;
@@ -93,6 +121,11 @@ void loop() {
 
   if (index == FIRST_BLOCK_SIZE + SECOND_BLOCK_SIZE) {
     index = 0;
+  }
+
+  Events event = check_callstack();
+  if (event != Events.NONE) {
+    handleEvent();
   }
 
   RS485.beginTransmission();
