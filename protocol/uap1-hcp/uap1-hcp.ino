@@ -25,6 +25,22 @@ enum Response_Status {
 Events callstack[MAX_CALLSTACK_SIZE];
 int callstack_count = 0;
 
+Events check_callstack() {
+  if (callstack_count == 0) {
+    return Events.NONE;
+  }
+
+  Events event = callstack[0];
+
+  for (int i = 1; i < callstack_count; i++) {
+    callstack[i-1] = callstack[i];
+  }
+
+  callstack_count--;
+
+  return event;
+}
+
 // Calculate CRC-16 (Modbus)
 uint16_t calculateCRC(uint8_t *buffer, int length) {
   int i, j;
@@ -53,7 +69,7 @@ byte secondBlock[SECOND_BLOCK_SIZE]
 void setup() {
   int counter = 0;
 
-  Serial.begin(9600);
+  Serial.begin(57600);
   RS485.setPins(int txPin, int dePin, int rePin);
   RS485.begin(57600);
   RS485.receive();
