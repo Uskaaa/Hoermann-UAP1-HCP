@@ -1,5 +1,30 @@
 #include <ArduinoRS485.h>
 
+enum Events {
+  OPEN_GATE,
+  CLOSE_GATE,
+  STOP,
+  VENTING,
+  HALF_OPEN,
+  TOGGLE_LIGHT,
+  NONE
+}
+
+enum Response_Status {
+  OPENING,
+  CLOSING,
+  STOPPED,
+  OPEN,
+  CLOSED,
+  HALF_OPENED,
+  VENTING,
+  NONE
+}
+
+#define MAX_CALLSTACK_SIZE 10
+Events callstack[MAX_CALLSTACK_SIZE];
+int callstack_count = 0;
+
 // Calculate CRC-16 (Modbus)
 uint16_t calculateCRC(uint8_t *buffer, int length) {
   int i, j;
@@ -30,7 +55,7 @@ void setup() {
 
   Serial.begin(9600);
   RS485.setPins(int txPin, int dePin, int rePin);
-  RS485.begin(9600);
+  RS485.begin(57600);
   RS485.receive();
 }
 
